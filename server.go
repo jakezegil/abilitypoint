@@ -8,14 +8,9 @@ import (
 	"os"
 )
 
-func main() {
-	var (
-		driver  neo4j.Driver
-		session neo4j.Session
-		result  neo4j.Result
-		err     error
-	)
+var base_url, user_name, password string
 
+func init() {
 	/* CONFIGURATION CODE */
 	jsonFile, err := os.Open("config.json")
 	if err != nil {
@@ -26,21 +21,18 @@ func main() {
 	var configuration map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &configuration)
 
-	var base_url string
 	if str, ok := configuration["base_url"].(string); ok {
 		base_url = str
 	} else {
 		fmt.Println("Can't start server because database url wasn't specified in config!")
 		os.Exit(1)
 	}
-	var user_name string
 	if str, ok := configuration["base_url"].(string); ok {
 		user_name = str
 	} else {
 		fmt.Println("Can't start server because database username wasn't specified in config!")
 		os.Exit(1)
 	}
-	var password string
 	if str, ok := configuration["base_url"].(string); ok {
 		password = str
 	} else {
@@ -48,6 +40,15 @@ func main() {
 		os.Exit(1)
 	}
 	/* ******************  */
+}
+
+func main() {
+	var (
+		driver  neo4j.Driver
+		session neo4j.Session
+		result  neo4j.Result
+		err     error
+	)
 
 	if driver, err = neo4j.NewDriver("bolt://"+base_url+":7687", neo4j.BasicAuth(user_name, password, "")); err != nil {
 		fmt.Println("ERROR")
